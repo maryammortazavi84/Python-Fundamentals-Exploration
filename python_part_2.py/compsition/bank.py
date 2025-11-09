@@ -45,7 +45,7 @@ class Bank:
         account = self._accounts.get(account_number)
         if not (account):
             print("wrong data!")
-            print("❌ Deposit failed.")
+            
             return 
 
         success = account.deposite(amount, password)
@@ -98,14 +98,14 @@ class Bank:
 
 # -------------------- Test Section --------------------
 # Create two sample accounts manually
-bank = Bank()
-for _ in range(3):
-    bank.open_account()   
+# bank = Bank()
+# for _ in range(3):
+#     bank.open_account()   
 
-bank.close_account()
-bank.diposit()
-bank.withdraw()
-bank.balance()
+# bank.close_account()
+# bank.diposit()
+# bank.withdraw()
+# bank.balance()
 
 
 

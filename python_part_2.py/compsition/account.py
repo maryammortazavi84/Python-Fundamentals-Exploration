@@ -39,8 +39,12 @@ class Account:
         if self.getbalance() < amount:
             print("not enough balance!")
             return False
+        if amount <= self._block_balance:
+            self._block_balance -= amount
+        else:
+            self._block_balance = 0
 
-        self._block_balance -= amount
+        # self._block_balance -= amount
         self._balance -= amount
         return True
     
@@ -58,6 +62,7 @@ class Account:
         if not self._validate_amount_psw(0,pwd):
             return False
         self.is_closed = True
+        return True
 
     def reopened(self, pwd):
         if not self._validate_amount_psw(0,pwd):
