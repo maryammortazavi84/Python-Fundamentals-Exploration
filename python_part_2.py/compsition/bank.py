@@ -2,8 +2,9 @@ from account import Account
 
 
 class Bank:
-    def __init__(self):
+    def __init__(self,name):
         self._accounts = {}
+        self.name = name
 
     def creat_account(self, name, starting_balance, pasword):
         print("*** attempt to create an account ***")

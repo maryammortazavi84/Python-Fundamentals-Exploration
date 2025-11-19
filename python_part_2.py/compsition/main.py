@@ -3,6 +3,12 @@ main program. shows the menu to the user
 """
 from bank import Bank 
 
+
+# banks = {
+#     'melli' : Bank("melli"),
+#     'saman' : Bank("saman"),
+# }
+
 def validation(choice:str)->int:
     while True:
         if not choice.isdigit():
@@ -64,3 +70,12 @@ please enter your choice:  """))
 
         
 main()
+
+
+
+
+
+
+
+
+
