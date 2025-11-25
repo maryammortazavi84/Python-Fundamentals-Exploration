@@ -1,3 +1,11 @@
+"""
+    A utility class that converts English number words (one, twenty, hundred, etc.)
+    to digits in text files using the word2number library.
+    
+    Example:
+        "I have twenty apples" → "I have 20 apples"
+"""
+
 import sys
 from word2number import w2n
 class NumberWordReplacer:
