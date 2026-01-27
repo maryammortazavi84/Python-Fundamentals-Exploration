@@ -1,116 +1,82 @@
-from account import Account
+from __future__ import annotations
+from account_m import Account
+# from person import Person
 
 
-class Bank:
-    def __init__(self,name):
+class BankService:
+    def __init__(self, bank_name:str):
+        bank_name = bank_name.strip()
+        if not bank_name:
+            raise ValueError("Bank name cannot be empty!")
         self._accounts = {}
-        self.name = name
+        self._bank_name = bank_name.title()
 
-    def creat_account(self, name, starting_balance, pasword):
-        print("*** attempt to create an account ***")
-        account = Account(name, pasword, starting_balance)
-        self._accounts[account.account_number] = account
+    def __str__(self):
+        lines = []
+        lines.append(f"Bank: {self.bank_name}")
+        lines.append("=" * 50)
+        lines.append(f"{'Customer ID':<12} {'Name':<20} {'Balance':>10}")
+        lines.append("-" * 50)
+
+        for account in self._accounts.values():
+            lines.append(
+            f"{account.account_num:<12} "
+            f"{account.name:<20} "
+            f"{account.balance:>10,}"
+        )
+
+        lines.append("=" * 50)
+        lines.append(f"Total customers: {len(self._accounts)}")
+        return "\n".join(lines)
+
+    def create_account(self, person:"Person", psw:str, initial_balance:int=0) -> Account:
+        if not psw or len(psw.strip()) < 4:
+            raise ValueError(f"[{person.customer_id}] Password too weak! Minimum 4 characters.")
+        if initial_balance < 0:
+            raise ValueError(f"[{person.customer_id}] Initial balance cannot be negative!")
         
+        if person.customer_id in self._accounts:
+            raise ValueError("you already have an account in this bank!")
+        account = Account(person.customer_id, person.name, self.bank_name, psw, initial_balance)
+        self._accounts[person.customer_id] = account
         return account
 
-    def open_account(self):
-        print("*** open account ***")
-        user_name = input("what is the new account name? ")
-        user_starting_balance = int(input("what is your starting amount? "))
-        user_pass= int(input("what is your new password? "))
-        user_account = self.creat_account(user_name, user_starting_balance, user_pass)
-        print(f"your new account number is {user_account.account_number}\n")
+    def deposit(self, customer_id:int, amount:int, psw:str) -> bool:
+        if customer_id not in self._accounts:
+            raise ValueError(f"[{customer_id}] No account found in {self.bank_name}")
 
-    def close_account(self):
-        print("*** close account ***")
-        account_number = int(input("enter account number: "))
-        password = int(input("enter password: "))
+        account = self._accounts[customer_id]
+        result = account.deposit(amount,psw)
+        return result                
 
-        account = self._accounts.get(account_number)
-        if not (account):
-            print("wrong data!")
-            return 
-        
-        if  not account.close_account(password):
-            return
-        print("✅ Account closed successfully!")
+    def withdraw(self, customer_id:int, amount:int, psw:str) -> bool:
+        if customer_id not in self._accounts:
+            raise ValueError(f"[{customer_id}] No account found in {self.bank_name}")
 
+        account = self._accounts[customer_id]
+        result = account.withdraw(amount,psw)
+        return result
 
-    def diposit(self):
-        print("*** deposit ***")
-        account_number = int(input("enter account number: "))
-        amount = int(input("enter amount: "))
-        password = int(input("enter password: "))
+    def close_account(self, customer_id:int, psw:str) -> bool:
+        if customer_id not in self._accounts:
+            raise ValueError(f"[{customer_id}] No account found in {self.bank_name}")
 
+        account = self._accounts[customer_id]
+        result = account.close_account(psw)
+        if result:  # یعنی حساب با موفقیت بسته شد
+            del self._accounts[customer_id]
+        return result
 
-        account = self._accounts.get(account_number)
-        if not (account):
-            print("wrong data!")
-            
-            return 
+    def get_balance(self, customer_id:int, psw:str) ->int:
+        if customer_id not in self._accounts:
+            raise ValueError(f"[{customer_id}] No account found in {self.bank_name}")
 
-        success = account.deposite(amount, password)
-        if success:
-            print("✅ Deposit successful!")
-        else:
-            print("❌ Deposit failed.")
-        
-
-    def withdraw(self):
-        print("*** withdraw ***")
-
-        account_number = int(input("Enter account number: "))
-        amount = int(input("Enter amount: "))
-        password = int(input("Enter password: "))
-
-        account = self._accounts.get(account_number)
-        if not account:
-            print("❌ Wrong account number!")
-            return
-        
-        success = account.withdraw(amount, password)
-        if success:
-            print("✅ Withdrawal successful!")
-        else:
-            print("❌ Withdrawal failed.")
+        account = self._accounts[customer_id]
+        return account.get_balance(psw)
 
 
-    def balance(self):
-        print("*** balance inquiry ***")
-        account_number = int(input("Enter account number: "))
-        password = int(input("Enter password: "))
-
-        account = self._accounts.get(account_number)
-        if not account:
-            print("❌ Wrong account number!")
-            return
-
-        if password != account.psw:
-            print("❌ Wrong password!")
-            return
-
-        print(f"💰 Your available balance: {account.getbalance()}")
-
-
-
-        
-
-
-
-# -------------------- Test Section --------------------
-# Create two sample accounts manually
-# bank = Bank()
-# for _ in range(3):
-#     bank.open_account()   
-
-# bank.close_account()
-# bank.diposit()
-# bank.withdraw()
-# bank.balance()
-
-
-
-
-
-
+    @property
+    def bank_name(self):
+        return self._bank_name
+    
 
